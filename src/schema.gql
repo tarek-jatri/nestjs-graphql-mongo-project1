@@ -6,6 +6,7 @@ type UserType {
   id: ID!
   name: String!
   phone: String!
+  password: String!
 }
 
 type Query {
@@ -14,10 +15,10 @@ type Query {
 }
 
 type Mutation {
-  createUser(input: UserInput!): UserType!
+  createUser(input: CreateUserInput!): UserType!
 }
 
-input UserInput {
+input CreateUserInput {
   name: String!
   phone: String!
   password: String!
