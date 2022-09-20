@@ -1,14 +1,14 @@
+import { join } from "path";
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
-import { AdminModule } from "./admin/admin.module";
+import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
 import { UserModule } from "./user/user.module";
 import { AttendanceModule } from "./attendance/attendance.module";
-import { join } from "path";
-import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
 
 
 @Module({
@@ -20,7 +20,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()]
     }),
-    UserModule
+    UserModule,
+    AttendanceModule
   ],
   controllers: [AppController],
   providers: [AppService]

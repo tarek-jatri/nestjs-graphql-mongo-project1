@@ -3,23 +3,51 @@
 # ------------------------------------------------------
 
 type UserType {
-  id: ID!
+  _id: ID!
   name: String!
   phone: String!
   password: String!
 }
 
+type Attendance {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   hello: String!
   getUsers: [UserType!]!
+  attendance(id: Int!): Attendance!
 }
 
 type Mutation {
   createUser(input: CreateUserInput!): UserType!
+  updateUser(input: UpdateUserInput!): UserType!
+  createAttendance(createAttendanceInput: CreateAttendanceInput!): Attendance!
+  updateAttendance(updateAttendanceInput: UpdateAttendanceInput!): Attendance!
+  removeAttendance(id: Int!): Attendance!
 }
 
 input CreateUserInput {
   name: String!
   phone: String!
   password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  phone: String
+  password: String
+  _id: String!
+}
+
+input CreateAttendanceInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateAttendanceInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
