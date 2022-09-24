@@ -10,7 +10,7 @@ export class ActivityLogService {
   constructor(@InjectModel(Log.name) private logModel: Model<LogDocument>) {}
 
   async createActivityLog(createActivityLogDto: CreateLogInput) {
-    let { current, previous } = createActivityLogDto;
+    let { current, previous, model } = createActivityLogDto;
     // @ts-ignore
     delete current.__v;
     // @ts-ignore
@@ -23,18 +23,29 @@ export class ActivityLogService {
     delete current.updatedAt;
     // @ts-ignore
     delete previous.updatedAt;
+
     current = JSON.parse(JSON.stringify(current));
     previous = JSON.parse(JSON.stringify(previous));
 
     const before = detailedDiff(current, previous);
     const after = detailedDiff(previous, current);
 
-    const log = new this.logModel({
-      difference: {
-        before,
-        after,
-      },
-    });
-    return await log.save();
+    if (
+      // @ts-ignore
+      Object.keys(after.added).length ||
+      // @ts-ignore
+      Object.keys(after.deleted).length ||
+      // @ts-ignore
+      Object.keys(after.updated).length
+    ) {
+      const activityLog = new this.logModel({
+        difference: {
+          before,
+          after,
+        },
+        model,
+      });
+      return await activityLog.save();
+    }
   }
 }

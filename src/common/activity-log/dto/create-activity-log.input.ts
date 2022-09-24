@@ -10,4 +10,8 @@ export class CreateLogInput {
   @IsNotEmpty()
   @Field()
   current: object;
+
+  @IsNotEmpty()
+  @Field()
+  model: string;
 }

@@ -7,6 +7,8 @@ export type LogDocument = Log & Document;
 export class Log {
   @Prop({ type: Object, required: true })
   difference: object;
+  @Prop({ required: true })
+  model: string;
 }
 
 export const LogSchema = SchemaFactory.createForClass(Log);
