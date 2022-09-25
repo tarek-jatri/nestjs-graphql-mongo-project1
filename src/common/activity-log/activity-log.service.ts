@@ -39,12 +39,13 @@ export class ActivityLogService {
     const before = detailedDiff(current, previous);
     const after = detailedDiff(previous, current);
     if (
-      // @ts-ignore
-      Object.keys(after.added).length ||
-      // @ts-ignore
-      Object.keys(after.deleted).length ||
-      // @ts-ignore
-      Object.keys(after.updated).length
+      (// @ts-ignore
+        Object.keys(after.added).length ||
+        // @ts-ignore
+        Object.keys(after.deleted).length ||
+        // @ts-ignore
+        Object.keys(after.updated).length
+      ) && this.models[`${model}`]
     ) {
       const activityLog = new this.models[`${model}`]({
         model,
