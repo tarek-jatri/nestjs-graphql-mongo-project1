@@ -6,7 +6,7 @@ export class UserType {
   _id: string;
   @Field(() => String)
   readonly name: string;
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   readonly phone: string;
   @Field(() => String)
   readonly password: string;

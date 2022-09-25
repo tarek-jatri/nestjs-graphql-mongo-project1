@@ -1,16 +1,18 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UserService } from './user.service';
-import { CreateUserInput } from './dto/create-user.input';
-import { UserType } from './entities/user.type';
-import { UpdateUserInput } from './dto/update-user.input';
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { UserService } from "./user.service";
+import { CreateUserInput } from "./dto/create-user.input";
+import { UserType } from "./entities/user.type";
+import { UpdateUserInput } from "./dto/update-user.input";
+import { DeleteUserInput } from "./dto/delete-user.input";
 
 @Resolver()
 export class UserResolver {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) {
+  }
 
   @Query(() => String)
   async hello() {
-    return 'Hello, world!';
+    return "Hello, world!";
   }
 
   @Query(() => [UserType])
@@ -19,13 +21,19 @@ export class UserResolver {
   }
 
   @Mutation(() => UserType)
-  async createUser(@Args('input') createInput: CreateUserInput) {
+  createUser(@Args("input") createInput: CreateUserInput) {
     return this.userService.createUser(createInput);
   }
 
   @Mutation(() => UserType)
-  async updateUser(@Args('input') updateInput: UpdateUserInput) {
-    const user = await this.userService.updateUser(updateInput);
+  updateUser(@Args("input") updateInput: UpdateUserInput) {
+    const user = this.userService.updateUser(updateInput);
+    return user;
+  }
+
+  @Mutation(() => UserType)
+  deleteUser(@Args("input") deleteInput: DeleteUserInput) {
+    const user = this.userService.deleteUser(deleteInput);
     return user;
   }
 }

@@ -1,8 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IsNotEmpty } from "class-validator";
-import { Prop } from "@nestjs/mongoose";
-import mongoose from "mongoose";
-import { User } from "../../../user/user.schema";
 
 @InputType()
 export class CreateLogInput {
