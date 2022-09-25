@@ -1,16 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Log, LogDocument } from './activity-log.schema';
-import { Model } from 'mongoose';
-import { CreateLogInput } from './dto/create-activity-log.input';
-import { detailedDiff } from 'deep-object-diff';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Log, LogDocument } from "./schema/activity-log.schema";
+import { Model } from "mongoose";
+import { CreateLogInput } from "./dto/create-activity-log.input";
+import { detailedDiff } from "deep-object-diff";
+import { UserActivityLog, UserActivityLogDocument } from "./schema/user-activity-log.schema";
 
 @Injectable()
 export class ActivityLogService {
-  constructor(@InjectModel(Log.name) private logModel: Model<LogDocument>) {}
+  private models: object = {};
+
+  constructor(
+    @InjectModel(Log.name) private logModel: Model<LogDocument>,
+    @InjectModel(UserActivityLog.name) private userActivityLogModel: Model<UserActivityLogDocument>
+  ) {
+    this.models[`${Log.name}`] = logModel;
+    this.models[`${UserActivityLog.name.split("ActivityLog")[0]}`] = userActivityLogModel;
+  }
 
   async createActivityLog(createActivityLogDto: CreateLogInput) {
-    let { current, previous, model } = createActivityLogDto;
+    let { current, previous, model, action, operationName, query, documentId, requestedBy } = createActivityLogDto;
     // @ts-ignore
     delete current.__v;
     // @ts-ignore
@@ -29,7 +38,6 @@ export class ActivityLogService {
 
     const before = detailedDiff(current, previous);
     const after = detailedDiff(previous, current);
-
     if (
       // @ts-ignore
       Object.keys(after.added).length ||
@@ -38,12 +46,17 @@ export class ActivityLogService {
       // @ts-ignore
       Object.keys(after.updated).length
     ) {
-      const activityLog = new this.logModel({
+      const activityLog = new this.models[`${model}`]({
+        model,
+        action,
+        operationName,
+        query,
+        documentId,
+        requestedBy,
         difference: {
           before,
-          after,
-        },
-        model,
+          after
+        }
       });
       return await activityLog.save();
     }
