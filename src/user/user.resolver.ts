@@ -4,6 +4,7 @@ import { CreateUserInput } from "./dto/create-user.input";
 import { UserType } from "./entities/user.type";
 import { UpdateUserInput } from "./dto/update-user.input";
 import { DeleteUserInput } from "./dto/delete-user.input";
+import { GetOneUserInput } from "./dto/get-one-user.input";
 
 @Resolver()
 export class UserResolver {
@@ -19,6 +20,12 @@ export class UserResolver {
   getUsers() {
     return this.userService.getAllUsers();
   }
+
+  @Query(() => UserType)
+  getOneUser(@Args("input") getOneUserInput: GetOneUserInput) {
+    return this.userService.getOneUser(getOneUserInput);
+  }
+
 
   @Mutation(() => UserType)
   createUser(@Args("input") createInput: CreateUserInput) {

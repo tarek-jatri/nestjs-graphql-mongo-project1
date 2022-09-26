@@ -6,6 +6,7 @@ import { CreateUserInput } from "./dto/create-user.input";
 import { UpdateUserInput } from "./dto/update-user.input";
 import { DeleteUserInput } from "./dto/delete-user.input";
 import { ActivityLogService } from "../common/activity-log/activity-log.service";
+import { GetOneUserInput } from "./dto/get-one-user.input";
 
 @Injectable()
 export class UserService {
@@ -22,6 +23,11 @@ export class UserService {
 
   async getAllUsers(): Promise<User[]> {
     return await this.userModel.find().exec();
+  }
+
+  async getOneUser(getOneUserDto: GetOneUserInput): Promise<User> {
+    const { username } = getOneUserDto;
+    return await this.userModel.findOne({ phone: username }).exec();
   }
 
   async updateUser(updateUserDto: UpdateUserInput): Promise<User> {

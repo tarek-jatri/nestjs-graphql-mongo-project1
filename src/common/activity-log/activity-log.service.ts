@@ -20,6 +20,10 @@ export class ActivityLogService {
 
   async createActivityLog(createActivityLogDto: CreateLogInput) {
     let { current, previous, model, action, operationName, query, documentId, requestedBy } = createActivityLogDto;
+
+    // let { __v, createdAt, updatedAt, ...current } = current;
+    // let { __v, createdAt, updatedAt, ...previous } = previous;
+
     // @ts-ignore
     delete current.__v;
     // @ts-ignore
