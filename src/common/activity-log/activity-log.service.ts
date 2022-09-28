@@ -1,10 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Log, LogDocument } from "./schema/activity-log.schema";
-import { Model } from "mongoose";
-import { CreateLogInput } from "./dto/create-activity-log.input";
-import { detailedDiff } from "deep-object-diff";
-import { UserActivityLog, UserActivityLogDocument } from "./schema/user-activity-log.schema";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Log, LogDocument } from './schema/activity-log.schema';
+import { Model } from 'mongoose';
+import { CreateLogInput } from './dto/create-activity-log.input';
+import { detailedDiff } from 'deep-object-diff';
+import {
+  UserActivityLog,
+  UserActivityLogDocument,
+} from './schema/user-activity-log.schema';
 
 @Injectable()
 export class ActivityLogService {
@@ -12,14 +15,25 @@ export class ActivityLogService {
 
   constructor(
     @InjectModel(Log.name) private logModel: Model<LogDocument>,
-    @InjectModel(UserActivityLog.name) private userActivityLogModel: Model<UserActivityLogDocument>
+    @InjectModel(UserActivityLog.name)
+    private userActivityLogModel: Model<UserActivityLogDocument>,
   ) {
     this.models[`${Log.name}`] = logModel;
-    this.models[`${UserActivityLog.name.split("ActivityLog")[0]}`] = userActivityLogModel;
+    this.models[`${UserActivityLog.name.split('ActivityLog')[0]}`] =
+      userActivityLogModel;
   }
 
   async createActivityLog(createActivityLogDto: CreateLogInput) {
-    let { current, previous, model, action, operationName, query, documentId, requestedBy } = createActivityLogDto;
+    let {
+      current,
+      previous,
+      model,
+      action,
+      operationName,
+      query,
+      documentId,
+      requestedBy,
+    } = createActivityLogDto;
 
     // let { __v, createdAt, updatedAt, ...current } = current;
     // let { __v, createdAt, updatedAt, ...previous } = previous;
@@ -43,13 +57,13 @@ export class ActivityLogService {
     const before = detailedDiff(current, previous);
     const after = detailedDiff(previous, current);
     if (
-      (// @ts-ignore
-        Object.keys(after.added).length ||
+      // @ts-ignore
+      (Object.keys(after.added).length ||
         // @ts-ignore
         Object.keys(after.deleted).length ||
         // @ts-ignore
-        Object.keys(after.updated).length
-      ) && this.models[`${model}`]
+        Object.keys(after.updated).length) &&
+      this.models[`${model}`]
     ) {
       const activityLog = new this.models[`${model}`]({
         model,
@@ -60,8 +74,8 @@ export class ActivityLogService {
         requestedBy,
         difference: {
           before,
-          after
-        }
+          after,
+        },
       });
       return await activityLog.save();
     }

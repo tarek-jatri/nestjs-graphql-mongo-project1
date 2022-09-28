@@ -1,43 +1,46 @@
-import { CreateLogInput } from "./dto/create-activity-log.input";
-import * as contextService from "request-context";
+import { CreateLogInput } from './dto/create-activity-log.input';
+import * as contextService from 'request-context';
 
 export class ActivityLogPluginService {
   activityLogPlugin(activityLogService) {
     const createActivityLogDto: CreateLogInput = {
-      model: "",
-      action: "",
-      operationName: "",
-      query: "",
-      documentId: "",
-      requestedBy: "",
+      model: '',
+      action: '',
+      operationName: '',
+      query: '',
+      documentId: '',
+      requestedBy: '',
       previous: {},
-      current: {}
+      current: {},
     };
     return (schema) => {
       //=> CREATE
-      schema.pre("save", function(next) {
-        const gqlCtx = contextService.get("request:activityLog").body;
-        createActivityLogDto.action = "CREATE";
+      schema.pre('save', function (next) {
+        const gqlCtx = contextService.get('request:activityLog').body;
+        createActivityLogDto.action = 'CREATE';
         createActivityLogDto.operationName = gqlCtx.operationName;
         createActivityLogDto.query = gqlCtx.query;
-        createActivityLogDto.requestedBy = gqlCtx.req?.user._id ? gqlCtx.req.user._id : undefined;
+        createActivityLogDto.requestedBy = gqlCtx.req?.user._id
+          ? gqlCtx.req.user._id
+          : undefined;
         next();
       });
-      schema.post("save", async (doc) => {
+      schema.post('save', async (doc) => {
         createActivityLogDto.documentId = doc._id;
         createActivityLogDto.current = doc;
         createActivityLogDto.model = doc.constructor.modelName;
         await activityLogService.createActivityLog(createActivityLogDto);
       });
 
-
       //=> UPDATE
-      schema.pre("findOneAndUpdate", async function(next) {
-        const gqlCtx = contextService.get("request:activityLog").body;
-        createActivityLogDto.action = "UPDATE";
+      schema.pre('findOneAndUpdate', async function (next) {
+        const gqlCtx = contextService.get('request:activityLog').body;
+        createActivityLogDto.action = 'UPDATE';
         createActivityLogDto.operationName = gqlCtx.operationName;
         createActivityLogDto.query = gqlCtx.query;
-        createActivityLogDto.requestedBy = gqlCtx.req?.user._id ? gqlCtx.req.user._id : undefined;
+        createActivityLogDto.requestedBy = gqlCtx.req?.user._id
+          ? gqlCtx.req.user._id
+          : undefined;
         createActivityLogDto.model = this.model.modelName;
         createActivityLogDto.previous = await this.model
           .findOne(this.getQuery())
@@ -45,7 +48,7 @@ export class ActivityLogPluginService {
           .lean();
         next();
       });
-      schema.post("findOneAndUpdate", async (doc) => {
+      schema.post('findOneAndUpdate', async (doc) => {
         createActivityLogDto.documentId = doc._id;
         createActivityLogDto.current = doc;
         await activityLogService.createActivityLog(createActivityLogDto);
@@ -53,12 +56,14 @@ export class ActivityLogPluginService {
 
       //=> DELETE
       // findOneAndDelete
-      schema.pre("findOneAndDelete", async function(next) {
-        const gqlCtx = contextService.get("request:activityLog").body;
-        createActivityLogDto.action = "DELETE";
+      schema.pre('findOneAndDelete', async function (next) {
+        const gqlCtx = contextService.get('request:activityLog').body;
+        createActivityLogDto.action = 'DELETE';
         createActivityLogDto.operationName = gqlCtx.operationName;
         createActivityLogDto.query = gqlCtx.query;
-        createActivityLogDto.requestedBy = gqlCtx.req?.user._id ? gqlCtx.req.user._id : undefined;
+        createActivityLogDto.requestedBy = gqlCtx.req?.user._id
+          ? gqlCtx.req.user._id
+          : undefined;
         createActivityLogDto.model = this.model.modelName;
         createActivityLogDto.previous = await this.model
           .findOne(this.getQuery())
@@ -66,18 +71,20 @@ export class ActivityLogPluginService {
           .lean();
         next();
       });
-      schema.post("findOneAndDelete", async (doc) => {
+      schema.post('findOneAndDelete', async (doc) => {
         createActivityLogDto.documentId = doc._id;
         await activityLogService.createActivityLog(createActivityLogDto);
       });
 
       // findByIdAndRemove
-      schema.pre("findOneAndRemove", async function(next) {
-        const gqlCtx = contextService.get("request:activityLog").body;
-        createActivityLogDto.action = "DELETE";
+      schema.pre('findOneAndRemove', async function (next) {
+        const gqlCtx = contextService.get('request:activityLog').body;
+        createActivityLogDto.action = 'DELETE';
         createActivityLogDto.operationName = gqlCtx.operationName;
         createActivityLogDto.query = gqlCtx.query;
-        createActivityLogDto.requestedBy = gqlCtx.req?.user._id ? gqlCtx.req.user._id : undefined;
+        createActivityLogDto.requestedBy = gqlCtx.req?.user._id
+          ? gqlCtx.req.user._id
+          : undefined;
         createActivityLogDto.model = this.model.modelName;
         createActivityLogDto.previous = await this.model
           .findOne(this.getQuery())
@@ -85,7 +92,7 @@ export class ActivityLogPluginService {
           .lean();
         next();
       });
-      schema.post("findOneAndRemove", async (doc) => {
+      schema.post('findOneAndRemove', async (doc) => {
         createActivityLogDto.documentId = doc._id;
         await activityLogService.createActivityLog(createActivityLogDto);
       });

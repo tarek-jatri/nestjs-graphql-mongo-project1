@@ -1,10 +1,8 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
-import { CreateUserInput } from './dto/create-user.input';
 import { UserType } from './entities/user.type';
 import { UpdateUserInput } from './dto/update-user.input';
 import { DeleteUserInput } from './dto/delete-user.input';
-import { GetOneUserInput } from './dto/get-one-user.input';
 import { ReturnUserType } from './entities/return-user.type';
 import { UseGuards } from '@nestjs/common';
 import { JwtAtuhGuard } from '../auth/guards/jwt-atuh.guard';

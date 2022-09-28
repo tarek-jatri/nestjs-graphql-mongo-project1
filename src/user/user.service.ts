@@ -5,17 +5,12 @@ import { Model } from 'mongoose';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { DeleteUserInput } from './dto/delete-user.input';
-import { ActivityLogService } from '../common/activity-log/activity-log.service';
 import { GetOneUserInput } from './dto/get-one-user.input';
 import { UserType } from './entities/user.type';
-import { Context } from '@nestjs/graphql';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private activityLogService: ActivityLogService,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async createUser(createUserDto: CreateUserInput): Promise<UserType> {
     const user = new this.userModel(createUserDto);

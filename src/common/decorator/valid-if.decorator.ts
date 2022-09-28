@@ -3,27 +3,28 @@ import {
   ValidationArguments,
   ValidationOptions,
   ValidatorConstraint,
-  ValidatorConstraintInterface
-} from "class-validator";
+  ValidatorConstraintInterface,
+} from 'class-validator';
 
-export function ValidIf(callback: (object, value) => {}, validationOptions?: ValidationOptions) {
+export function ValidIf(
+  callback: (object, value) => {},
+  validationOptions?: ValidationOptions,
+) {
   return (object: any, propertyName: string) => {
     registerDecorator({
       target: object.constructor,
       propertyName,
       options: validationOptions,
       constraints: [callback],
-      validator: ValidIfConstraint
+      validator: ValidIfConstraint,
     });
   };
 }
 
-@ValidatorConstraint({ name: "ValidIf" })
+@ValidatorConstraint({ name: 'ValidIf' })
 export class ValidIfConstraint implements ValidatorConstraintInterface {
-
   validate(value: any, args: ValidationArguments) {
     const [callback] = args.constraints;
     return callback(args.object, value);
   }
-
 }

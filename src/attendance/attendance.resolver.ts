@@ -9,7 +9,9 @@ export class AttendanceResolver {
   constructor(private readonly attendanceService: AttendanceService) {}
 
   @Mutation(() => Attendance)
-  createAttendance(@Args('createAttendanceInput') createAttendanceInput: CreateAttendanceInput) {
+  createAttendance(
+    @Args('createAttendanceInput') createAttendanceInput: CreateAttendanceInput,
+  ) {
     return this.attendanceService.create(createAttendanceInput);
   }
 
@@ -24,8 +26,13 @@ export class AttendanceResolver {
   }
 
   @Mutation(() => Attendance)
-  updateAttendance(@Args('updateAttendanceInput') updateAttendanceInput: UpdateAttendanceInput) {
-    return this.attendanceService.update(updateAttendanceInput.id, updateAttendanceInput);
+  updateAttendance(
+    @Args('updateAttendanceInput') updateAttendanceInput: UpdateAttendanceInput,
+  ) {
+    return this.attendanceService.update(
+      updateAttendanceInput.id,
+      updateAttendanceInput,
+    );
   }
 
   @Mutation(() => Attendance)

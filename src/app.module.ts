@@ -12,6 +12,7 @@ import { UserModule } from './user/user.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { AuthModule } from './auth/auth.module';
 import { config } from './config';
+import { NewModule } from './new/new.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { config } from './config';
     UserModule,
     AttendanceModule,
     AuthModule,
+    NewModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
