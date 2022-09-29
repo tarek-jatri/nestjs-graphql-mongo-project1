@@ -5,13 +5,27 @@ import { getModelToken } from '@nestjs/mongoose';
 
 describe('User Service', () => {
   let userService: UserService;
+  const createUserDto = {
+    name: 'test user',
+    phone: '01842626668',
+    password: '01842626668',
+  };
+
   const mockUserModel = {
-    save: jest
+    new: jest.fn().mockResolvedValue(createUserDto),
+    create: jest
       .fn()
       .mockImplementation((user) =>
         Promise.resolve({ _id: Date.now(), ...user }),
       ),
+    find: jest.fn().mockReturnValue({
+      exec: jest
+        .fn()
+        .mockResolvedValueOnce([{ _id: Date.now(), ...createUserDto }]),
+    } as any),
+    exec: jest.fn(),
   };
+
   beforeEach(async () => {
     const testModule: TestingModule = await Test.createTestingModule({
       providers: [
@@ -29,17 +43,23 @@ describe('User Service', () => {
     expect(userService).toBeDefined();
   });
 
-  it('should create a new user', async () => {
-    const createUserDto = {
-      name: 'test user',
-      phone: '01842626668',
-      password: '01842626668',
-    };
+  describe('create user', () => {
+    it('should create a new user', async () => {
+      const newUser = await userService.createUser(createUserDto);
+      const { password, ...matchUser } = createUserDto;
+      expect(newUser).toBeDefined();
+      expect(newUser).toEqual({
+        _id: expect.any(Number),
+        password: expect.any(String),
+        ...matchUser,
+      });
+    });
+  });
 
-    expect(await userService.createUser(createUserDto)).toEqual({
-      _id: expect.any(String),
-      password: expect.any(String),
-      ...createUserDto,
+  describe('Get All User', () => {
+    it('should get all user', async () => {
+      const allUsers = await userService.getAllUsers();
+      expect(allUsers).toBeDefined();
     });
   });
 });
