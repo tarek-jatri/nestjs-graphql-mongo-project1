@@ -9,7 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalGuards(new ActivityLogGuard());
   app.use(contextService.middleware('request'));
-  await app.listen(3001);
+  await app.listen(3005);
 }
 
 bootstrap();

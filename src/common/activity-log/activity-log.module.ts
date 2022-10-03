@@ -10,16 +10,22 @@ import {
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      {
-        name: Log.name,
-        schema: LogSchema,
-      },
-      {
-        name: UserActivityLog.name,
-        schema: UserActivityLogSchema,
-      },
-    ]),
+    MongooseModule.forRoot('mongodb://localhost/nest_log', {
+      connectionName: 'nest_log',
+    }),
+    MongooseModule.forFeature(
+      [
+        {
+          name: Log.name,
+          schema: LogSchema,
+        },
+        {
+          name: UserActivityLog.name,
+          schema: UserActivityLogSchema,
+        },
+      ],
+      'nest_log',
+    ),
   ],
   providers: [ActivityLogPluginService, ActivityLogService],
   exports: [ActivityLogService, ActivityLogPluginService],

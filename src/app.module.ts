@@ -12,15 +12,33 @@ import { UserModule } from './user/user.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { AuthModule } from './auth/auth.module';
 import { config } from './config';
-import { NewModule } from './new/new.module';
+import { ActivityLogModule } from './common/activity-log/activity-log.module';
+import { ActivityLogService } from './common/activity-log/activity-log.service';
+import { ActivityLogPluginService } from './common/activity-log/activity-log-plugin.service';
 
 @Module({
   imports: [
+    ActivityLogModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
     }),
-    MongooseModule.forRoot('mongodb://localhost/nest'),
+    MongooseModule.forRootAsync({
+      imports: [ActivityLogModule],
+      inject: [ActivityLogService, ActivityLogPluginService],
+      useFactory: (
+        activityLogService: ActivityLogService,
+        activityLogPluginService: ActivityLogPluginService,
+      ) => ({
+        uri: 'mongodb://localhost/nest',
+        connectionFactory: (connection) => {
+          connection.plugin(
+            activityLogPluginService.activityLogPlugin(activityLogService),
+          );
+          return connection;
+        },
+      }),
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -30,7 +48,6 @@ import { NewModule } from './new/new.module';
     UserModule,
     AttendanceModule,
     AuthModule,
-    NewModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

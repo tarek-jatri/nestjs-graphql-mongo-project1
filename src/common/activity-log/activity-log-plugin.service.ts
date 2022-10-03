@@ -13,9 +13,10 @@ export class ActivityLogPluginService {
       previous: {},
       current: {},
     };
-    return (schema) => {
+    return function asdb(schema) {
       //=> CREATE
       schema.pre('save', function (next) {
+        console.log('create called save');
         const gqlCtx = contextService.get('request:activityLog').body;
         createActivityLogDto.action = 'CREATE';
         createActivityLogDto.operationName = gqlCtx.operationName;
@@ -23,6 +24,7 @@ export class ActivityLogPluginService {
         createActivityLogDto.requestedBy = gqlCtx.req?.user._id
           ? gqlCtx.req.user._id
           : undefined;
+        createActivityLogDto.previous = {};
         next();
       });
       schema.post('save', async (doc) => {
@@ -57,6 +59,7 @@ export class ActivityLogPluginService {
       //=> DELETE
       // findOneAndDelete
       schema.pre('findOneAndDelete', async function (next) {
+        console.log('findOneAndDelete PRE called');
         const gqlCtx = contextService.get('request:activityLog').body;
         createActivityLogDto.action = 'DELETE';
         createActivityLogDto.operationName = gqlCtx.operationName;
@@ -72,7 +75,9 @@ export class ActivityLogPluginService {
         next();
       });
       schema.post('findOneAndDelete', async (doc) => {
+        console.log('findOneAndDelete POST called');
         createActivityLogDto.documentId = doc._id;
+        createActivityLogDto.current = {};
         await activityLogService.createActivityLog(createActivityLogDto);
       });
 
@@ -94,6 +99,7 @@ export class ActivityLogPluginService {
       });
       schema.post('findOneAndRemove', async (doc) => {
         createActivityLogDto.documentId = doc._id;
+        createActivityLogDto.current = {};
         await activityLogService.createActivityLog(createActivityLogDto);
       });
     };

@@ -1,25 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Log, LogDocument } from './schema/activity-log.schema';
-import { Model } from 'mongoose';
-import { CreateLogInput } from './dto/create-activity-log.input';
-import { detailedDiff } from 'deep-object-diff';
-import {
-  UserActivityLog,
-  UserActivityLogDocument,
-} from './schema/user-activity-log.schema';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Log, LogDocument } from "./schema/activity-log.schema";
+import { Model } from "mongoose";
+import { CreateLogInput } from "./dto/create-activity-log.input";
+import { detailedDiff } from "deep-object-diff";
+import { UserActivityLog, UserActivityLogDocument } from "./schema/user-activity-log.schema";
 
 @Injectable()
 export class ActivityLogService {
   private models: object = {};
 
   constructor(
-    @InjectModel(Log.name) private logModel: Model<LogDocument>,
-    @InjectModel(UserActivityLog.name)
-    private userActivityLogModel: Model<UserActivityLogDocument>,
+    @InjectModel(Log.name, "nest_log")
+    private logModel: Model<LogDocument>,
+    @InjectModel(UserActivityLog.name, "nest_log")
+    private userActivityLogModel: Model<UserActivityLogDocument>
   ) {
     this.models[`${Log.name}`] = logModel;
-    this.models[`${UserActivityLog.name.split('ActivityLog')[0]}`] =
+    this.models[`${UserActivityLog.name.split("ActivityLog")[0]}`] =
       userActivityLogModel;
   }
 
@@ -32,7 +30,7 @@ export class ActivityLogService {
       operationName,
       query,
       documentId,
-      requestedBy,
+      requestedBy
     } = createActivityLogDto;
 
     // let { __v, createdAt, updatedAt, ...current } = current;
@@ -56,6 +54,12 @@ export class ActivityLogService {
 
     const before = detailedDiff(current, previous);
     const after = detailedDiff(previous, current);
+
+    console.log("-> current: ", current);
+    console.log("--> previous: ", previous);
+    console.log("--> before: ", before);
+    console.log("--> after: ", after);
+
     if (
       // @ts-ignore
       (Object.keys(after.added).length ||
@@ -74,8 +78,8 @@ export class ActivityLogService {
         requestedBy,
         difference: {
           before,
-          after,
-        },
+          after
+        }
       });
       return await activityLog.save();
     }
