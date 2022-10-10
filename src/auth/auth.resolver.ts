@@ -4,8 +4,6 @@ import { LoginResponseEntity } from './entity/login-response.entity';
 import { UserLoginInput } from './dto/user-login.input';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
-import { UserType } from '../user/entities/user.type';
-import { ReturnUserType } from '../user/entities/return-user.type';
 import { UserSignupInput } from './dto/user-signup.input';
 import { SignupResponseEntity } from './entity/signup-response.entity';
 
@@ -23,7 +21,8 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignupResponseEntity)
-  signup(@Args('userLoginInput') userSignupInput: UserSignupInput) {
-    return this.authService.signup(userSignupInput);
+  async signup(@Args('userSignupInput') userSignupInput: UserSignupInput) {
+    // console.log(userSignupInput);
+    return await this.authService.signup(userSignupInput);
   }
 }

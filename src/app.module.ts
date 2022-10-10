@@ -32,9 +32,9 @@ import { ActivityLogPluginService } from './common/activity-log/activity-log-plu
       ) => ({
         uri: 'mongodb://localhost/nest',
         connectionFactory: (connection) => {
-          connection.plugin(
-            activityLogPluginService.activityLogPlugin(activityLogService),
-          );
+          // connection.plugin(
+          //   activityLogPluginService.activityLogPlugin(activityLogService),
+          // );
           return connection;
         },
       }),
